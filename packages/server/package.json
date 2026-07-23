@@ -1,0 +1,21 @@
+{
+  "name": "@yummycode/server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "dependencies": {
+    "@yummycode/core": "workspace:*",
+    "@yummycode/llm": "workspace:*",
+    "@yummycode/conversation": "workspace:*",
+    "@yummycode/debrief": "workspace:*",
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.15"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
