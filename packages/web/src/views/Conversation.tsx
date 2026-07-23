@@ -1,8 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowUp, ClipboardCheck } from 'lucide-react';
+import { ArrowUp, ClipboardCheck, Mic, Volume2, VolumeX } from 'lucide-react';
 import type { EvidenceChunk, Session, Turn } from '../types';
 import { getEvidence, getSession, sendMessage } from '../api';
 import { Evidence } from '../components/Evidence';
+import {
+  createRecognizer,
+  recognitionSupported,
+  speak,
+  speechSupported,
+  stopSpeaking,
+  type Recognizer,
+} from '../voice';
 
 const PHASE_LABEL: Record<string, string> = {
   opening: 'Opening',
@@ -29,9 +37,48 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
   const [userTurnCount, setUserTurnCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [voiceOn, setVoiceOn] = useState(
+    () => typeof localStorage !== 'undefined' && localStorage.getItem('yc_voice') === '1',
+  );
+  const [listening, setListening] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const recognizerRef = useRef<Recognizer | null>(null);
+  const canSpeak = speechSupported();
+  const canListen = recognitionSupported();
+
+  // Stop any speech or recognition when leaving the session.
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+      recognizerRef.current?.stop();
+    };
+  }, []);
+
+  const toggleVoice = () => {
+    setVoiceOn((on) => {
+      const next = !on;
+      if (typeof localStorage !== 'undefined') localStorage.setItem('yc_voice', next ? '1' : '0');
+      if (!next) stopSpeaking();
+      return next;
+    });
+  };
+
+  const toggleMic = () => {
+    if (listening) {
+      recognizerRef.current?.stop();
+      return;
+    }
+    const recognizer = createRecognizer({
+      onTranscript: (text) => setInput(text),
+      onEnd: () => setListening(false),
+    });
+    if (!recognizer) return;
+    recognizerRef.current = recognizer;
+    setListening(true);
+    recognizer.start();
+  };
 
   useEffect(() => {
     let alive = true;
@@ -71,6 +118,8 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
     setSending(true);
     setStreamText('');
     setError(null);
+    stopSpeaking();
+    recognizerRef.current?.stop();
 
     getEvidence(sessionId, content)
       .then((chunks) => setEvidence(chunks))
@@ -84,6 +133,7 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
         setPhase(payload.phase);
         setUserTurnCount(payload.userTurnCount);
         setSending(false);
+        if (voiceOn) speak(payload.turn.content);
       },
       onError: (message) => {
         setError(message);
@@ -91,7 +141,7 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
         setSending(false);
       },
     });
-  }, [input, sending, sessionId]);
+  }, [input, sending, sessionId, voiceOn]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,10 +196,23 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
             <span className="chip-dot" />
             {PHASE_LABEL[phase] ?? phase}
           </span>
-          <button className="pill pill-ghost" disabled={!canDebrief} onClick={onOpenDebrief}>
-            <ClipboardCheck size={14} strokeWidth={1.75} />
-            End and get debrief
-          </button>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {canSpeak && (
+              <button
+                className="pill pill-ghost"
+                onClick={toggleVoice}
+                aria-pressed={voiceOn}
+                title={voiceOn ? 'Voice on' : 'Voice off'}
+              >
+                {voiceOn ? <Volume2 size={14} strokeWidth={1.75} /> : <VolumeX size={14} strokeWidth={1.75} />}
+                {voiceOn ? 'Voice on' : 'Voice off'}
+              </button>
+            )}
+            <button className="pill pill-ghost" disabled={!canDebrief} onClick={onOpenDebrief}>
+              <ClipboardCheck size={14} strokeWidth={1.75} />
+              End and get debrief
+            </button>
+          </div>
         </div>
 
         <div className="with-panel">
@@ -167,10 +230,20 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
 
             <div className="composer">
               <div className="composer-box">
+                {canListen && (
+                  <button
+                    className={`icon-btn ghost ${listening ? 'listening' : ''}`}
+                    onClick={toggleMic}
+                    aria-label={listening ? 'Stop listening' : 'Speak'}
+                    title={listening ? 'Listening' : 'Speak your answer'}
+                  >
+                    <Mic size={16} strokeWidth={2} />
+                  </button>
+                )}
                 <textarea
                   ref={taRef}
                   rows={1}
-                  placeholder="Explain your project in your own words"
+                  placeholder={listening ? 'Listening...' : 'Explain your project in your own words'}
                   value={input}
                   onChange={onInput}
                   onKeyDown={onKeyDown}
@@ -186,7 +259,11 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
                 </button>
               </div>
               <div className="hint">
-                <span>Enter to send, Shift + Enter for a new line</span>
+                <span>
+                  {canListen
+                    ? 'Enter to send, or tap the mic to speak'
+                    : 'Enter to send, Shift + Enter for a new line'}
+                </span>
                 <span>{userTurnCount} exchanges</span>
               </div>
             </div>
