@@ -6,7 +6,12 @@ import { detectEntryPoints, detectRoutes } from './routes.js';
 import { parseManifests } from './manifests.js';
 import { readTextSafe, walkProject } from './walk.js';
 
-export const INDEXER_VERSION = '0.1.0';
+/**
+ * Cache-schema revision, not a release version. Written into each on-disk index
+ * and compared on read; bump it whenever the scanner's output changes so stale
+ * caches are re-generated instead of served. Independent of the package version.
+ */
+export const INDEXER_VERSION = 'rev-2';
 
 const LANGUAGE_BY_EXT: Record<string, string> = {
   '.ts': 'TypeScript',
