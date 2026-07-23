@@ -1,10 +1,11 @@
-import type {
-  DebriefContradiction,
-  DebriefDodge,
-  DebriefJargonItem,
-  PersonaId,
-  ProjectIndex,
-  Session,
+import {
+  PERSONA_META,
+  type DebriefContradiction,
+  type DebriefDodge,
+  type DebriefJargonItem,
+  type PersonaId,
+  type ProjectIndex,
+  type Session,
 } from '@yummycode/core';
 import { jargonDensity } from './jargon.js';
 
@@ -56,21 +57,16 @@ export function scoreConsistency(contradictions: DebriefContradiction[]): number
   return clamp(100 - contradictions.length * 22);
 }
 
-const PM_IMPACT = [
-  'user',
-  'users',
-  'problem',
-  'risk',
-  'scope',
-  'launch',
-  'impact',
-  'value',
-  'customer',
-  'goal',
-  'timeline',
-];
+const PRODUCT_WORDS = ['user', 'users', 'problem', 'risk', 'scope', 'launch', 'impact', 'value', 'customer', 'goal', 'timeline'];
+const TECHNICAL_WORDS = ['tradeoff', 'trade-off', 'because', 'failure', 'edge', 'scale', 'latency', 'design', 'bottleneck', 'decision', 'constraint', 'flow', 'store', 'concurrency'];
+const BUSINESS_WORDS = ['cost', 'risk', 'timeline', 'impact', 'value', 'market', 'revenue', 'customer', 'roi', 'budget', 'moat', 'growth'];
+const HEDGE_WORDS = ['kind of', 'sort of', 'you know', 'it just works', 'magic', 'complicated', 'stuff', 'somehow'];
 
-/** How well the explanation fit the chosen audience. */
+function countWords(text: string, words: string[]): number {
+  return words.filter((w) => text.includes(w)).length;
+}
+
+/** How well the explanation fit the chosen audience, by audience class. */
 export function scoreAudienceFit(
   persona: PersonaId,
   session: Session,
@@ -81,11 +77,19 @@ export function scoreAudienceFit(
     .map((t) => t.content.toLowerCase())
     .join(' ');
 
-  if (persona === 'parent') {
-    // Non-technical audience: jargon hurts a lot.
-    return clamp(95 - jargon.length * 9);
+  switch (PERSONA_META[persona].audienceClass) {
+    case 'nontechnical':
+      // Jargon hurts a lot for a non-technical listener.
+      return clamp(95 - jargon.length * 9);
+    case 'product':
+      return clamp(45 + countWords(userText, PRODUCT_WORDS) * 9 - jargon.length * 4);
+    case 'technical': {
+      // Jargon is expected; reward depth, penalize hand-waving.
+      const depth = countWords(userText, TECHNICAL_WORDS);
+      const hedges = countWords(userText, HEDGE_WORDS);
+      return clamp(50 + depth * 8 - hedges * 6);
+    }
+    case 'business':
+      return clamp(45 + countWords(userText, BUSINESS_WORDS) * 9 - jargon.length * 5);
   }
-  // PM: reward impact/product language, penalize jargon lightly.
-  const impactHits = PM_IMPACT.filter((w) => new RegExp(`\\b${w}\\b`).test(userText)).length;
-  return clamp(45 + impactHits * 9 - jargon.length * 4);
 }

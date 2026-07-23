@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { Users, Briefcase, ArrowRight } from 'lucide-react';
+import {
+  Users,
+  Briefcase,
+  ArrowRight,
+  ShoppingBag,
+  Building2,
+  TrendingUp,
+  UserPlus,
+  Wrench,
+  ClipboardList,
+  type LucideIcon,
+} from 'lucide-react';
 import type { PersonaId, PersonaMeta } from '../types';
 
 interface Props {
@@ -9,9 +20,15 @@ interface Props {
   onStart: (persona: PersonaId) => void;
 }
 
-const ICONS: Record<PersonaId, typeof Users> = {
+const ICONS: Record<PersonaId, LucideIcon> = {
   parent: Users,
+  customer: ShoppingBag,
   pm: Briefcase,
+  exec: Building2,
+  investor: TrendingUp,
+  teammate: UserPlus,
+  engineer: Wrench,
+  interviewer: ClipboardList,
 };
 
 export function AudiencePicker({ personas, projectName, starting, onStart }: Props) {

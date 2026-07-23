@@ -5,7 +5,21 @@
  * Every package speaks in terms of these types so modules stay decoupled.
  */
 
-export type PersonaId = 'parent' | 'pm';
+export type PersonaId =
+  | 'parent'
+  | 'pm'
+  | 'teammate'
+  | 'engineer'
+  | 'exec'
+  | 'interviewer'
+  | 'investor'
+  | 'customer';
+
+/**
+ * The kind of listener a persona represents. Drives audience-fit scoring and
+ * the mock provider's tone, so behavior generalizes across the whole lineup.
+ */
+export type AudienceClass = 'nontechnical' | 'product' | 'technical' | 'business';
 
 export type SessionPhase = 'opening' | 'probing' | 'escalation' | 'closing' | 'debrief';
 
@@ -174,5 +188,6 @@ export interface PersonaMeta {
   id: PersonaId;
   name: string;
   audience: string;
+  audienceClass: AudienceClass;
   blurb: string;
 }

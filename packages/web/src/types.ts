@@ -1,7 +1,15 @@
 // API response shapes. Mirrors @yummycode/core domain types, kept local so the
 // browser bundle never imports Node-only code.
 
-export type PersonaId = 'parent' | 'pm';
+export type PersonaId =
+  | 'parent'
+  | 'pm'
+  | 'teammate'
+  | 'engineer'
+  | 'exec'
+  | 'interviewer'
+  | 'investor'
+  | 'customer';
 export type SessionPhase = 'opening' | 'probing' | 'escalation' | 'closing' | 'debrief';
 export type TurnRole = 'user' | 'persona' | 'system';
 
@@ -9,6 +17,7 @@ export interface PersonaMeta {
   id: PersonaId;
   name: string;
   audience: string;
+  audienceClass: string;
   blurb: string;
 }
 
