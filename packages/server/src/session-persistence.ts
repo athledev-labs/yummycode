@@ -37,7 +37,11 @@ export async function saveSession(
     const dir = sessionsDir(baseDir);
     await fs.mkdir(dir, { recursive: true });
     const record: StoredRecord = { session, debrief, savedAt: new Date().toISOString() };
-    await fs.writeFile(path.join(dir, `${session.id}.json`), JSON.stringify(record, null, 2), 'utf8');
+    await fs.writeFile(
+      path.join(dir, `${session.id}.json`),
+      JSON.stringify(record, null, 2),
+      'utf8',
+    );
   } catch {
     // Best-effort: persistence must never break the live session.
   }

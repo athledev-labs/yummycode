@@ -80,8 +80,10 @@ export const CUSTOMER_PROFILE: PersonaProfile = {
   ],
   phaseDirectives: {
     opening: 'Make them state the value to you in plain terms. What does it do for you.',
-    probing: 'Probe whether it really helps. Ask how it is better than what you do now, and what it costs you.',
-    escalation: 'Get skeptical. Ask what the catch is, what it does not do, and why you should trust it.',
+    probing:
+      'Probe whether it really helps. Ask how it is better than what you do now, and what it costs you.',
+    escalation:
+      'Get skeptical. Ask what the catch is, what it does not do, and why you should trust it.',
     closing: 'Decide. Ask them to give you one reason you would actually switch.',
     debrief: 'The conversation is over.',
   },

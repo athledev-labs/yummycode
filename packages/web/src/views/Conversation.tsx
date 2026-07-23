@@ -204,7 +204,11 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
                 aria-pressed={voiceOn}
                 title={voiceOn ? 'Voice on' : 'Voice off'}
               >
-                {voiceOn ? <Volume2 size={14} strokeWidth={1.75} /> : <VolumeX size={14} strokeWidth={1.75} />}
+                {voiceOn ? (
+                  <Volume2 size={14} strokeWidth={1.75} />
+                ) : (
+                  <VolumeX size={14} strokeWidth={1.75} />
+                )}
                 {voiceOn ? 'Voice on' : 'Voice off'}
               </button>
             )}
@@ -243,7 +247,9 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
                 <textarea
                   ref={taRef}
                   rows={1}
-                  placeholder={listening ? 'Listening...' : 'Explain your project in your own words'}
+                  placeholder={
+                    listening ? 'Listening...' : 'Explain your project in your own words'
+                  }
                   value={input}
                   onChange={onInput}
                   onKeyDown={onKeyDown}

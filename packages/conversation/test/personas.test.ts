@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { PERSONA_LIST, PERSONA_META, isPersonaId, type PersonaId, type SessionPhase } from '@yummycode/core';
+import {
+  PERSONA_LIST,
+  PERSONA_META,
+  isPersonaId,
+  type PersonaId,
+  type SessionPhase,
+} from '@yummycode/core';
 import { PROFILES, getProfile } from '@yummycode/conversation';
 
 const PHASES: SessionPhase[] = ['opening', 'probing', 'escalation', 'closing', 'debrief'];

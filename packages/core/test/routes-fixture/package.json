@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "type": "module",
   "main": "api.ts",
-  "bin": { "tool": "bin/cli.js" },
-  "dependencies": { "hono": "^4.0.0" }
+  "bin": {
+    "tool": "bin/cli.js"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  }
 }

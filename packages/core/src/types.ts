@@ -6,14 +6,7 @@
  */
 
 export type PersonaId =
-  | 'parent'
-  | 'pm'
-  | 'teammate'
-  | 'engineer'
-  | 'exec'
-  | 'interviewer'
-  | 'investor'
-  | 'customer';
+  'parent' | 'pm' | 'teammate' | 'engineer' | 'exec' | 'interviewer' | 'investor' | 'customer';
 
 /**
  * The kind of listener a persona represents. Drives audience-fit scoring and

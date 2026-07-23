@@ -41,7 +41,12 @@ async function post(app: Hono, url: string, body?: unknown) {
 describe('session persistence', () => {
   it('round-trips a session through disk and lists it', async () => {
     const index = await scanProject(FIXTURE);
-    const app = createApp({ index, provider: new MockProvider(), webDist: null, persistDir: baseDir });
+    const app = createApp({
+      index,
+      provider: new MockProvider(),
+      webDist: null,
+      persistDir: baseDir,
+    });
 
     const created = await post(app, '/api/sessions', { persona: 'engineer' });
     const { session } = (await created.json()) as any;
@@ -65,13 +70,23 @@ describe('session persistence', () => {
     const index = await scanProject(FIXTURE);
 
     // First server writes a session directly to disk.
-    const first = createApp({ index, provider: new MockProvider(), webDist: null, persistDir: baseDir });
+    const first = createApp({
+      index,
+      provider: new MockProvider(),
+      webDist: null,
+      persistDir: baseDir,
+    });
     const created = await post(first, '/api/sessions', { persona: 'pm' });
     const { session } = (await created.json()) as any;
     await saveSession(baseDir, session);
 
     // A brand new app (no shared memory) should still find it.
-    const second = createApp({ index, provider: new MockProvider(), webDist: null, persistDir: baseDir });
+    const second = createApp({
+      index,
+      provider: new MockProvider(),
+      webDist: null,
+      persistDir: baseDir,
+    });
     const res = await second.fetch(new Request(`http://local/api/sessions/${session.id}`));
     expect(res.status).toBe(200);
     const reloaded = (await res.json()) as any;

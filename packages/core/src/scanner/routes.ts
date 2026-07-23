@@ -29,7 +29,10 @@ const LINE_PATTERNS: LinePattern[] = [
   },
   // FastAPI / Flask decorators: @app.get("/x"), @router.post("/x")
   {
-    re: new RegExp(String.raw`@\w+\.(` + HTTP_METHODS.join('|') + String.raw`)\s*\(\s*['"]([^'"]+)`, 'i'),
+    re: new RegExp(
+      String.raw`@\w+\.(` + HTTP_METHODS.join('|') + String.raw`)\s*\(\s*['"]([^'"]+)`,
+      'i',
+    ),
     method: (m) => m[1]!.toUpperCase(),
     path: (m) => m[2]!,
   },
@@ -64,8 +67,10 @@ const COMMENT_LINE = /^\s*(\/\/|\*|\/\*|#|<!--)/;
 function isRouteCandidate(file: string): boolean {
   const ext = path.extname(file).toLowerCase();
   const base = path.basename(file).toLowerCase();
-  if (base === 'urls.py' || base === 'routes.rb' || base === 'route.ts' || base === 'route.js') return true;
-  if (!['.ts', '.js', '.tsx', '.jsx', '.mjs', '.py', '.rb', '.go', '.java', '.kt'].includes(ext)) return false;
+  if (base === 'urls.py' || base === 'routes.rb' || base === 'route.ts' || base === 'route.js')
+    return true;
+  if (!['.ts', '.js', '.tsx', '.jsx', '.mjs', '.py', '.rb', '.go', '.java', '.kt'].includes(ext))
+    return false;
   const lower = file.toLowerCase();
   return (
     /rout|api|server|app|main|index|handler|controller|endpoint|urls/.test(lower) ||
@@ -134,7 +139,8 @@ function nextAppRoutes(rel: string, text: string): DetectedRoute[] {
   return out;
 }
 
-const MONOREPO_ENTRY = /(?:^|\/)(?:packages|apps|services)\/[^/]+\/src\/(?:index|main|cli|server)\.(ts|tsx|js|mjs)$/;
+const MONOREPO_ENTRY =
+  /(?:^|\/)(?:packages|apps|services)\/[^/]+\/src\/(?:index|main|cli|server)\.(ts|tsx|js|mjs)$/;
 
 /** Detect likely entry points from manifests and conventional filenames. */
 export function detectEntryPoints(files: string[], manifests: ManifestSummary[]): EntryPoint[] {

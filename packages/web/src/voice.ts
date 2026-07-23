@@ -35,8 +35,7 @@ export function createRecognizer(handlers: {
   onTranscript: (text: string, isFinal: boolean) => void;
   onEnd: () => void;
 }): Recognizer | null {
-  const Ctor =
-    (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition ?? null;
+  const Ctor = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition ?? null;
   if (!Ctor) return null;
 
   const recognition = new Ctor();

@@ -57,10 +57,59 @@ export function scoreConsistency(contradictions: DebriefContradiction[]): number
   return clamp(100 - contradictions.length * 22);
 }
 
-const PRODUCT_WORDS = ['user', 'users', 'problem', 'risk', 'scope', 'launch', 'impact', 'value', 'customer', 'goal', 'timeline'];
-const TECHNICAL_WORDS = ['tradeoff', 'trade-off', 'because', 'failure', 'edge', 'scale', 'latency', 'design', 'bottleneck', 'decision', 'constraint', 'flow', 'store', 'concurrency'];
-const BUSINESS_WORDS = ['cost', 'risk', 'timeline', 'impact', 'value', 'market', 'revenue', 'customer', 'roi', 'budget', 'moat', 'growth'];
-const HEDGE_WORDS = ['kind of', 'sort of', 'you know', 'it just works', 'magic', 'complicated', 'stuff', 'somehow'];
+const PRODUCT_WORDS = [
+  'user',
+  'users',
+  'problem',
+  'risk',
+  'scope',
+  'launch',
+  'impact',
+  'value',
+  'customer',
+  'goal',
+  'timeline',
+];
+const TECHNICAL_WORDS = [
+  'tradeoff',
+  'trade-off',
+  'because',
+  'failure',
+  'edge',
+  'scale',
+  'latency',
+  'design',
+  'bottleneck',
+  'decision',
+  'constraint',
+  'flow',
+  'store',
+  'concurrency',
+];
+const BUSINESS_WORDS = [
+  'cost',
+  'risk',
+  'timeline',
+  'impact',
+  'value',
+  'market',
+  'revenue',
+  'customer',
+  'roi',
+  'budget',
+  'moat',
+  'growth',
+];
+const HEDGE_WORDS = [
+  'kind of',
+  'sort of',
+  'you know',
+  'it just works',
+  'magic',
+  'complicated',
+  'stuff',
+  'somehow',
+];
 
 function countWords(text: string, words: string[]): number {
   return words.filter((w) => text.includes(w)).length;

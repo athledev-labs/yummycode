@@ -4,7 +4,12 @@ import { describe, expect, it } from 'vitest';
 import { scanProject, type Session } from '@yummycode/core';
 import { extractClaims } from '@yummycode/conversation';
 import { MockProvider } from '@yummycode/llm';
-import { analyzeSession, detectJargon, detectDodges, renderDebriefMarkdown } from '@yummycode/debrief';
+import {
+  analyzeSession,
+  detectJargon,
+  detectDodges,
+  renderDebriefMarkdown,
+} from '@yummycode/debrief';
 
 const FIXTURE = path.join(
   path.dirname(fileURLToPath(import.meta.url)),

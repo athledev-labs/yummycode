@@ -2,14 +2,7 @@
 // browser bundle never imports Node-only code.
 
 export type PersonaId =
-  | 'parent'
-  | 'pm'
-  | 'teammate'
-  | 'engineer'
-  | 'exec'
-  | 'interviewer'
-  | 'investor'
-  | 'customer';
+  'parent' | 'pm' | 'teammate' | 'engineer' | 'exec' | 'interviewer' | 'investor' | 'customer';
 export type SessionPhase = 'opening' | 'probing' | 'escalation' | 'closing' | 'debrief';
 export type TurnRole = 'user' | 'persona' | 'system';
 
