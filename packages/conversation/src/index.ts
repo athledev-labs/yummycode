@@ -1,10 +1,4 @@
-export {
-  PARENT_PROFILE,
-  PM_PROFILE,
-  PROFILES,
-  getProfile,
-  type PersonaProfile,
-} from './persona/profile.js';
+export { PROFILES, getProfile, type PersonaProfile } from './persona/profile.js';
 export { buildSystemPrompt, type PromptContext } from './persona/prompt.js';
 export { extractClaims } from './claims/extractor.js';
 export { findContradictions } from './claims/contradictions.js';

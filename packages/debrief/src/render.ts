@@ -1,14 +1,10 @@
 import type { Debrief, PersonaId } from '@yummycode/core';
 
 const PERSONA_LABEL: Record<PersonaId, string> = {
-  parent: 'Parent or friend',
-  customer: 'Skeptical customer',
-  pm: 'Curious PM',
-  teammate: 'New teammate',
-  engineer: 'Skeptical senior engineer',
-  interviewer: 'Interviewer',
-  exec: 'Executive',
-  investor: 'Investor',
+  friend: 'A friend',
+  pm: 'A product manager',
+  leader: 'A business leader',
+  engineer: 'A fellow engineer',
 };
 
 /**

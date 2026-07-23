@@ -5,8 +5,11 @@
  * Every package speaks in terms of these types so modules stay decoupled.
  */
 
-export type PersonaId =
-  'parent' | 'pm' | 'teammate' | 'engineer' | 'exec' | 'interviewer' | 'investor' | 'customer';
+/**
+ * General persona archetypes, one per audience class. Kept intentionally broad
+ * and defined as data, so users can tune them or add their own later.
+ */
+export type PersonaId = 'friend' | 'pm' | 'leader' | 'engineer';
 
 /**
  * The kind of listener a persona represents. Drives audience-fit scoring and

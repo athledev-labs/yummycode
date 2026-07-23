@@ -11,8 +11,8 @@ import { PROFILES, getProfile } from '@yummycode/conversation';
 const PHASES: SessionPhase[] = ['opening', 'probing', 'escalation', 'closing', 'debrief'];
 
 describe('persona lineup', () => {
-  it('exposes eight personas across four audience classes', () => {
-    expect(PERSONA_LIST).toHaveLength(8);
+  it('exposes four general personas, one per audience class', () => {
+    expect(PERSONA_LIST).toHaveLength(4);
     const classes = new Set(PERSONA_LIST.map((p) => p.audienceClass));
     expect([...classes].sort()).toEqual(['business', 'nontechnical', 'product', 'technical']);
   });

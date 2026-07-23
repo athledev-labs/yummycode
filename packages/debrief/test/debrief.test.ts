@@ -47,7 +47,7 @@ function buildSession(): Session {
 
   return {
     id: 'sess_test',
-    persona: 'parent',
+    persona: 'friend',
     phase: 'closing',
     projectName: 'acme-todos',
     turns,
@@ -80,7 +80,7 @@ describe('analyzeSession', () => {
 
     // Schema completeness.
     expect(debrief.sessionId).toBe('sess_test');
-    expect(debrief.persona).toBe('parent');
+    expect(debrief.persona).toBe('friend');
     expect(typeof debrief.clearSummary).toBe('string');
     expect(debrief.clearSummary.length).toBeGreaterThan(10);
     expect(debrief.userSummary).toMatch(/todo/i);

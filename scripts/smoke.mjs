@@ -84,7 +84,7 @@ async function main() {
     await fetch(`${base}/api/sessions`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ persona: 'parent' }),
+      body: JSON.stringify({ persona: 'friend' }),
     })
   ).json();
   const sid = created.session.id;

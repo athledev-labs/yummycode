@@ -50,10 +50,10 @@ describe('session API', () => {
   });
 
   it('creates a session with an opening persona turn', async () => {
-    const res = await post('/api/sessions', { persona: 'parent' });
+    const res = await post('/api/sessions', { persona: 'friend' });
     expect(res.status).toBe(200);
     const { session } = (await res.json()) as any;
-    expect(session.persona).toBe('parent');
+    expect(session.persona).toBe('friend');
     expect(session.turns).toHaveLength(1);
     expect(session.turns[0].role).toBe('persona');
   });
@@ -80,7 +80,7 @@ describe('session API', () => {
   });
 
   it('generates a debrief after a conversation', async () => {
-    const created = await post('/api/sessions', { persona: 'parent' });
+    const created = await post('/api/sessions', { persona: 'friend' });
     const { session } = (await created.json()) as any;
     await post(`/api/sessions/${session.id}/messages`, {
       content: 'It exposes an API and uses a database for todos.',

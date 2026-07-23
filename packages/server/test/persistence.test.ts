@@ -96,7 +96,7 @@ describe('session persistence', () => {
   it('does not persist when persistence is disabled', async () => {
     const index = await scanProject(FIXTURE);
     const app = createApp({ index, provider: new MockProvider(), webDist: null, persistDir: null });
-    const created = await post(app, '/api/sessions', { persona: 'parent' });
+    const created = await post(app, '/api/sessions', { persona: 'friend' });
     const { session } = (await created.json()) as any;
     const list = await app.fetch(new Request('http://local/api/sessions'));
     expect(((await list.json()) as any).sessions).toEqual([]);
