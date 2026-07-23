@@ -1,0 +1,45 @@
+{
+  "name": "yummycode",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first technical conversation simulator grounded in your own codebase.",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.7.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "yummycode": "packages/cli/dist/index.js"
+  },
+  "scripts": {
+    "build": "pnpm run build:libs && pnpm run build:web",
+    "build:libs": "tsc -b",
+    "build:web": "pnpm --filter @yummycode/web run build",
+    "dev": "pnpm --filter @yummycode/cli run dev",
+    "start": "node packages/cli/dist/index.js",
+    "yummycode": "node packages/cli/dist/index.js",
+    "clean": "tsc -b --clean",
+    "typecheck": "tsc -b",
+    "test": "pnpm run build:libs && vitest run",
+    "test:watch": "vitest",
+    "smoke": "pnpm run build && node scripts/smoke.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.5",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.19.1",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/llm" },
+    { "path": "./packages/conversation" },
+    { "path": "./packages/debrief" },
+    { "path": "./packages/server" },
+    { "path": "./packages/cli" }
+  ]
+}
