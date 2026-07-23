@@ -184,14 +184,7 @@ export function Conversation({ sessionId, onOpenDebrief, onSessionMissing }: Pro
   return (
     <div className="main" ref={scrollRef}>
       <div className="content content-wide">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
+        <div className="session-head">
           <span className="chip">
             <span className="chip-dot" />
             {PHASE_LABEL[phase] ?? phase}

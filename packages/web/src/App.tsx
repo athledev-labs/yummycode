@@ -3,8 +3,8 @@ import { AlertCircle } from 'lucide-react';
 import { useRoute } from './router';
 import { getHealth, getIndex, getPersonas, createSession } from './api';
 import type { Health, IndexOverview, PersonaId, PersonaMeta } from './types';
-import { Sidebar } from './components/Sidebar';
-import { AudiencePicker } from './views/AudiencePicker';
+import { TopBar } from './components/TopBar';
+import { GuidedHome } from './views/GuidedHome';
 import { Conversation } from './views/Conversation';
 import { DebriefView } from './views/DebriefView';
 
@@ -27,7 +27,7 @@ export function App() {
   }, []);
 
   const currentSessionId = route.sessionId;
-  const activeNav: 'session' | 'debrief' = route.view === 'debrief' ? 'debrief' : 'session';
+  const inSession = route.view !== 'picker';
 
   const providerWarning = useMemo(() => {
     if (!health) return null;
@@ -94,9 +94,10 @@ export function App() {
             </div>
           </div>
         )}
-        <AudiencePicker
+        <GuidedHome
           personas={personas}
           projectName={index.name}
+          description={index.description}
           starting={starting}
           onStart={onStart}
         />
@@ -106,17 +107,11 @@ export function App() {
 
   return (
     <div className="app">
-      <Sidebar
-        active={activeNav}
+      <TopBar
         health={health}
-        canDebrief={Boolean(currentSessionId)}
-        onNavigate={(view) => {
-          if (view === 'session') {
-            navigate(currentSessionId ? `/session/${currentSessionId}` : '/');
-          } else if (currentSessionId) {
-            navigate(`/session/${currentSessionId}/debrief`);
-          }
-        }}
+        inSession={inSession}
+        onHome={() => navigate('/')}
+        onNewSession={() => navigate('/')}
       />
       {renderView()}
     </div>
