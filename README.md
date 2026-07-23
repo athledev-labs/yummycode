@@ -4,9 +4,10 @@ Practice explaining your codebase to any audience, grounded in your actual proje
 
 As AI writes more of the implementation, the durable engineering skill is understanding a
 system and explaining it clearly under pressure. yummycode is a local-first conversation
-simulator: it indexes your repository, puts a persona across the table (a non-technical parent
-or a curious PM), and lets you practice. At the end it hands you a structured debrief that names
-the jargon you leaned on, the questions you dodged, and what to study next.
+simulator: it indexes your repository, puts a persona across the table (anyone from a
+non-technical parent to a skeptical senior engineer), and lets you practice by text or voice. At
+the end it hands you a structured debrief that names the jargon you leaned on, the questions you
+dodged, and what to study next.
 
 This is not a coding assistant or a code explainer. It does not answer for you. It asks.
 
@@ -44,10 +45,23 @@ node packages/cli/dist/index.js ~/dev/my-app --mock
 1. `yummycode` starts, you select a project, and it runs a real scan (README, manifests,
    directory shape, entry points, HTTP routes, config files).
 2. It detects a provider and starts a local server on an ephemeral port, then opens the browser.
-3. In the browser you pick an audience and have a conversation. The persona pushes back in
-   character and stays naive. An evidence sidebar surfaces the files and snippets it is drawing on.
+3. In the browser you pick an audience and have a conversation, by text or by voice. The persona
+   pushes back in character and stays naive. An evidence sidebar surfaces the files and snippets it
+   is drawing on.
 4. You end the session and get a debrief: your one-sentence summary versus a clearer one,
    untranslated jargon, dodged questions, contradictions, remaining gaps, and three things to study.
+   Copy it as Markdown or download it.
+
+Sessions are saved under the project's `.yummycode/sessions` so they survive a restart.
+
+## Audiences
+
+Eight personas across four kinds of listener. Each pushes back differently and never helps.
+
+- Non-technical: Parent or friend, Skeptical customer
+- Product: Curious PM
+- Business: Executive, Investor
+- Technical: New teammate, Skeptical senior engineer, Interviewer (system design)
 
 ## Providers
 
@@ -116,12 +130,17 @@ Design principles:
 GET  /api/health                    provider and project status
 GET  /api/index                     indexed project metadata for the sidebar
 GET  /api/personas                  available audiences
+GET  /api/sessions                  saved sessions (when persistence is on)
 POST /api/sessions                  create a session from the index
 GET  /api/sessions/:id              session state
 POST /api/sessions/:id/messages     user message, streams the persona reply over SSE
 GET  /api/sessions/:id/evidence     relevant index chunks for a topic
 POST /api/sessions/:id/debrief      generate the structured debrief
+GET  /api/sessions/:id/debrief.md   the debrief as Markdown
 ```
+
+Route detection covers Express, Hono, Fastify, FastAPI, Flask, NestJS, Spring, Rails, Django, and
+Next.js app-router files.
 
 ## Develop
 
@@ -142,9 +161,9 @@ contradiction and jargon detection, the debrief schema, and the session API.
 
 ## Scope
 
-v1 ships the parent and PM personas, text conversation with a voice-ready architecture, local
-indexing, and the debrief. Auth, billing, teams, custom personas, cloud sync, and diagrams are
-intentionally out of scope.
+Ships eight personas, text and voice conversation, local indexing across many stacks, session
+persistence, and a debrief you can export. Auth, billing, teams, a custom persona builder, cloud
+sync, and diagrams are intentionally out of scope. See `ROADMAP.md` for what comes next.
 
 ## License
 

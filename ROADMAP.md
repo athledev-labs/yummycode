@@ -1,84 +1,69 @@
 # Roadmap
 
-Order of work: get the persona lineup right first, then build outward (voice, deeper indexing,
-and the rest). Adding a persona is cheap in this architecture: a `PersonaProfile` in
+Adding a persona is cheap in this architecture: a `PersonaProfile` in
 `packages/conversation/src/persona/profile.ts` plus a `PERSONA_META` entry in
 `packages/core/src/personas.ts`. Everything else (orchestrator, grounding, debrief) already
 consumes them generically.
 
+## Shipped
+
+The full persona lineup and the first wave of enhancements are in.
+
+- Eight personas across four audience classes (see below).
+- Audience-class scoring, so the debrief judges fit differently per listener.
+- Voice: browser speech synthesis (persona speaks) and recognition (push to talk), with a text
+  fallback when the APIs are missing.
+- Deeper indexing: route detection for Express, Hono, Fastify, FastAPI, Flask, NestJS, Spring,
+  Rails, Django, and Next.js app-router files, comment lines skipped so example calls are not
+  counted, and monorepo-aware entry points (workspace packages plus package.json main and bin).
+- Debrief export as Markdown (copy or download).
+- Session persistence under the project's `.yummycode/sessions`, with resume across restarts.
+
 ## Personas
 
 Personas span two axes: how technical the listener is, and whether they think in product or
-engineering terms. A good general set covers both without overlap.
+engineering terms.
 
-### Shipped (v1)
+| Persona                     | Audience        | Pushes on                                                          |
+| --------------------------- | --------------- | ------------------------------------------------------------------ |
+| Parent or friend            | Non-technical   | What it does, who uses it, what happens when it breaks.            |
+| Skeptical customer          | Non-technical   | Why switch, what it does for me, what the catch is.                |
+| Curious PM                  | Product         | The problem and user, scope, the one thing it must nail.           |
+| Executive                   | Business + risk | Cost, timeline reality, risk, strategic fit.                       |
+| Investor                    | Business        | Market, why now, moat, what breaks the thesis.                     |
+| New teammate                | Technical, new  | The mental model to contribute: where things live, how data flows. |
+| Skeptical senior engineer   | Technical peer  | Design choices, tradeoffs, failure modes. No hand-waving.          |
+| Interviewer (system design) | Technical       | Constraints, alternatives, tradeoffs, rough scale.                 |
 
-| Persona          | Audience      | Pushes on                                                                                        |
-| ---------------- | ------------- | ------------------------------------------------------------------------------------------------ |
-| Parent or friend | Non-technical | What it actually does, who uses it, what happens when it breaks. Interrupts on any jargon.       |
-| Curious PM       | Product       | The problem and the user, scope, the one thing it must get right, risk, how success is measured. |
+## Next
 
-### Recommended core (build next)
-
-High value and broadly useful. These, with the two above, cover most real audiences.
-
-| Persona                     | Audience        | Pushes on                                                                                                                                            |
-| --------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| New teammate                | Technical, new  | The mental model needed to contribute: where things live, how a request flows, what to touch for a given change. Rewards a clear architecture story. |
-| Skeptical senior engineer   | Technical peer  | Design choices and tradeoffs, failure modes, "why not the simpler thing," scaling and edge cases. Does not accept hand-waving.                       |
-| Executive (CTO or eng lead) | Business + risk | Cost, timeline reality, what could go wrong, strategic fit, what happens if it slips. Redirects deep technical detail to impact and risk.            |
-
-### Specialized (later)
-
-Valuable for specific practice, narrower use.
-
-| Persona                     | Audience      | Pushes on                                                                                                        |
-| --------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Interviewer (system design) | Technical     | Constraints, alternatives considered, tradeoffs, rough scale math. Neutral and probing, like a design interview. |
-| Investor                    | Business      | Market, why now, moat, defensibility, what breaks the thesis. Impatient with detail that is not differentiation. |
-| Skeptical customer          | Non-technical | Only whether it solves their problem: why switch, what it does for them, what the catch is.                      |
+Ordered roughly by value.
 
 ### Persona authoring
 
-Before adding the specialized set, extract a small authoring format so a persona is defined as
-data (character, tone, constraints, per-phase directives, openers) with no code changes beyond
-registration. This keeps the lineup easy to grow and, later, opens the door to a custom persona
-builder (out of scope for now).
+Extract a small data-only authoring format (character, tone, constraints, per-phase directives,
+openers) so a persona needs no code beyond registration. This opens the door to a custom persona
+builder later.
 
-## Beyond personas
+### Deeper retrieval
 
-Phased so each stage ships something usable.
+Optional local embeddings retrieval as an upgrade over lexical grounding, still fully on device.
+Better topic tracking so grounding follows the thread rather than only the last message.
 
-### Phase B: Voice
+### Smarter conversation
 
-The turn manager and streaming pipeline are already voice-ready. Add speech to text on the way
-in and text to speech on the way out, with push to talk in the browser. No change to the
-conversation engine, only new edges on the server and web app.
+An optional LLM pass for claim and contradiction extraction to complement the heuristics.
+Configurable turn limits and escalation intensity per persona.
 
-### Phase C: Deeper indexing
+### Session history
 
-- Monorepo-aware entry points (packages/\*/src, bin fields, framework conventions), not just
-  top-level conventional names.
-- More route frameworks: Next.js and Nest.js, Django and Flask, Rails, Spring.
-- Optional local embeddings retrieval as an upgrade over lexical grounding, still fully on device.
-- Skip source examples in comments so self-scans stop reporting phantom routes.
+A browser view over saved sessions: revisit past debriefs and track scores over time for the
+same project.
 
-### Phase D: Smarter conversation
+### Packaging
 
-- Optional LLM pass for claim and contradiction extraction to complement the heuristics.
-- Topic tracking so grounding follows the thread instead of only the last message.
-- Configurable turn limits and escalation intensity per persona.
-
-### Phase E: Richer debrief
-
-- Trend across sessions for the same project.
-- Per-audience scoring history.
-- Export a debrief to markdown or share it.
-
-### Phase F: Persistence and packaging
-
-- Session history and resume.
-- Publish to npm so `npx yummycode` works with a one-line install.
+Publish to npm so `npx yummycode` works with a one-line install. This needs the workspace CLI
+bundled with its dependencies so it runs standalone outside the monorepo.
 
 ## Out of scope (still)
 
