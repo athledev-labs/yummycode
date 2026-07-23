@@ -4,8 +4,8 @@ Practice explaining your codebase to any audience, grounded in your actual proje
 
 As AI writes more of the implementation, the durable engineering skill is understanding a
 system and explaining it clearly under pressure. yummycode is a local-first conversation
-simulator: it indexes your repository, puts a persona across the table (anyone from a
-non-technical parent to a skeptical senior engineer), and lets you practice by text or voice. At
+simulator: it indexes your repository, puts a persona across the table (from a non-technical
+friend to a fellow engineer), and lets you practice by text or voice. At
 the end it hands you a structured debrief that names the jargon you leaned on, the questions you
 dodged, and what to study next.
 
@@ -56,12 +56,13 @@ Sessions are saved under the project's `.yummycode/sessions` so they survive a r
 
 ## Audiences
 
-Eight personas across four kinds of listener. Each pushes back differently and never helps.
+Four general personas, one per kind of listener. Each pushes back differently and never helps.
+They are defined as plain data, so you can tune them or add your own later.
 
-- Non-technical: Parent or friend, Skeptical customer
-- Product: Curious PM
-- Business: Executive, Investor
-- Technical: New teammate, Skeptical senior engineer, Interviewer (system design)
+- A friend (non-technical): interrupts on jargon, asks what things actually do
+- A product manager (product): users, scope, impact, and risk
+- A business leader (business): value, cost, risk, and outcomes
+- A fellow engineer (technical): design, tradeoffs, and failure modes
 
 ## Providers
 
@@ -161,7 +162,7 @@ contradiction and jargon detection, the debrief schema, and the session API.
 
 ## Scope
 
-Ships eight personas, text and voice conversation, local indexing across many stacks, session
+Ships four general personas, a guided home, text and voice conversation, local indexing across many stacks, session
 persistence, and a debrief you can export. Auth, billing, teams, a custom persona builder, cloud
 sync, and diagrams are intentionally out of scope. See `ROADMAP.md` for what comes next.
 

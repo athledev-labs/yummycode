@@ -9,7 +9,9 @@ consumes them generically.
 
 The full persona lineup and the first wave of enhancements are in.
 
-- Eight personas across four audience classes (see below).
+- Four general personas, one per audience class (see below), defined as editable data.
+- A guided, typography-led home that leads with the project and reveals the start once you pick
+  an audience.
 - Audience-class scoring, so the debrief judges fit differently per listener.
 - Voice: browser speech synthesis (persona speaks) and recognition (push to talk), with a text
   fallback when the APIs are missing.
@@ -21,19 +23,15 @@ The full persona lineup and the first wave of enhancements are in.
 
 ## Personas
 
-Personas span two axes: how technical the listener is, and whether they think in product or
-engineering terms.
+Four general archetypes, one per audience class. Kept broad on purpose so they read as templates,
+not job titles, and each is plain data that a user could tune or extend.
 
-| Persona                     | Audience        | Pushes on                                                          |
-| --------------------------- | --------------- | ------------------------------------------------------------------ |
-| Parent or friend            | Non-technical   | What it does, who uses it, what happens when it breaks.            |
-| Skeptical customer          | Non-technical   | Why switch, what it does for me, what the catch is.                |
-| Curious PM                  | Product         | The problem and user, scope, the one thing it must nail.           |
-| Executive                   | Business + risk | Cost, timeline reality, risk, strategic fit.                       |
-| Investor                    | Business        | Market, why now, moat, what breaks the thesis.                     |
-| New teammate                | Technical, new  | The mental model to contribute: where things live, how data flows. |
-| Skeptical senior engineer   | Technical peer  | Design choices, tradeoffs, failure modes. No hand-waving.          |
-| Interviewer (system design) | Technical       | Constraints, alternatives, tradeoffs, rough scale.                 |
+| Persona           | Audience      | Pushes on                                               |
+| ----------------- | ------------- | ------------------------------------------------------- |
+| A friend          | Non-technical | What it does, who uses it, what happens when it breaks. |
+| A product manager | Product       | Users, scope, the one thing it must get right, risk.    |
+| A business leader | Business      | Value, cost, timeline reality, and risk.                |
+| A fellow engineer | Technical     | Design, tradeoffs, failure modes, what breaks at scale. |
 
 ## Next
 
