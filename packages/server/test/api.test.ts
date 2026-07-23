@@ -95,6 +95,11 @@ describe('session API', () => {
     expect(debrief.projectName).toBe('acme-todos');
     expect(debrief.studyPlan).toHaveLength(3);
     expect(debrief.scores.clarity).toBeGreaterThanOrEqual(0);
+
+    const md = await app.fetch(new Request(`http://local/api/sessions/${session.id}/debrief.md`));
+    expect(md.status).toBe(200);
+    expect(md.headers.get('content-type')).toMatch(/text\/markdown/);
+    expect(await md.text()).toContain('# Debrief: acme-todos');
   });
 
   it('404s for a missing session', async () => {

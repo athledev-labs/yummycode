@@ -7,9 +7,12 @@ import {
   EyeOff,
   GraduationCap,
   RotateCcw,
+  Copy,
+  Check,
+  Download,
 } from 'lucide-react';
 import type { Debrief } from '../types';
-import { getDebrief } from '../api';
+import { getDebrief, getDebriefMarkdown, debriefMarkdownUrl } from '../api';
 
 interface Props {
   sessionId: string;
@@ -26,6 +29,18 @@ const SCORE_LABELS: Record<keyof Debrief['scores'], string> = {
 export function DebriefView({ sessionId, onRestart }: Props) {
   const [debrief, setDebrief] = useState<Debrief | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyMarkdown = async () => {
+    try {
+      const md = await getDebriefMarkdown(sessionId);
+      await navigator.clipboard.writeText(md);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // Clipboard can be blocked; the download link is the fallback.
+    }
+  };
 
   useEffect(() => {
     let alive = true;
@@ -72,6 +87,17 @@ export function DebriefView({ sessionId, onRestart }: Props) {
           A read on how clearly you explained {debrief.projectName}, and what to tighten before the
           next session.
         </p>
+
+        <div className="toolbar">
+          <button className="pill pill-ghost" onClick={copyMarkdown}>
+            {copied ? <Check size={14} strokeWidth={2} /> : <Copy size={14} strokeWidth={1.75} />}
+            {copied ? 'Copied' : 'Copy as markdown'}
+          </button>
+          <a className="pill pill-ghost" href={debriefMarkdownUrl(sessionId)} download>
+            <Download size={14} strokeWidth={1.75} />
+            Download
+          </a>
+        </div>
 
         <div className="section">
           <div className="section-title">

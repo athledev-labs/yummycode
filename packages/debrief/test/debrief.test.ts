@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { scanProject, type Session } from '@yummycode/core';
 import { extractClaims } from '@yummycode/conversation';
 import { MockProvider } from '@yummycode/llm';
-import { analyzeSession, detectJargon, detectDodges } from '@yummycode/debrief';
+import { analyzeSession, detectJargon, detectDodges, renderDebriefMarkdown } from '@yummycode/debrief';
 
 const FIXTURE = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -95,5 +95,15 @@ describe('analyzeSession', () => {
     const debrief = await analyzeSession(new MockProvider(), buildSession(), index);
     expect(debrief.contradictions.length).toBeGreaterThan(0);
     expect(debrief.scores.consistency).toBeLessThan(100);
+  });
+
+  it('renders the debrief as markdown', async () => {
+    const index = await scanProject(FIXTURE);
+    const debrief = await analyzeSession(new MockProvider(), buildSession(), index);
+    const md = renderDebriefMarkdown(debrief);
+    expect(md).toContain('# Debrief: acme-todos');
+    expect(md).toContain('## Scores');
+    expect(md).toContain('## Study before your next session');
+    expect(md).not.toContain('—'); // no em dashes
   });
 });

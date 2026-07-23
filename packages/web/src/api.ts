@@ -53,6 +53,16 @@ export async function getEvidence(id: string, topic: string): Promise<EvidenceCh
   return data.chunks;
 }
 
+export async function getDebriefMarkdown(id: string): Promise<string> {
+  const res = await fetch(`/api/sessions/${id}/debrief.md`);
+  if (!res.ok) throw new Error('No debrief markdown available yet.');
+  return res.text();
+}
+
+export function debriefMarkdownUrl(id: string): string {
+  return `/api/sessions/${id}/debrief.md`;
+}
+
 export async function getDebrief(id: string): Promise<Debrief> {
   const data = await json<{ debrief: Debrief }>(
     await fetch(`/api/sessions/${id}/debrief`, { method: 'POST' }),

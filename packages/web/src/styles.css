@@ -264,6 +264,16 @@ textarea {
   cursor: default;
 }
 
+a.pill {
+  text-decoration: none;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
 .pill-ghost {
   background: transparent;
   color: var(--text-2);

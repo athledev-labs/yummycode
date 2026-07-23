@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { PERSONA_LIST, isPersonaId, type ProjectIndex } from '@yummycode/core';
+import { PERSONA_LIST, isPersonaId, type Debrief, type ProjectIndex } from '@yummycode/core';
 import {
   buildResponderContext,
   evidenceFor,
@@ -13,7 +13,7 @@ import {
   sanitizeReply,
   startSession,
 } from '@yummycode/conversation';
-import { analyzeSession } from '@yummycode/debrief';
+import { analyzeSession, renderDebriefMarkdown } from '@yummycode/debrief';
 import type { LLMProvider } from '@yummycode/llm';
 import { SessionStore } from './session-store.js';
 import { filterThink } from './stream-filter.js';
@@ -53,6 +53,7 @@ export function createApp(deps: AppDeps): Hono {
   const { index, provider } = deps;
   const store = new SessionStore();
   const app = new Hono();
+  const debriefs = new Map<string, Debrief>();
 
   app.get('/api/health', async (c) => {
     const status = await provider.status();
@@ -201,11 +202,23 @@ export function createApp(deps: AppDeps): Hono {
     try {
       session.phase = 'debrief';
       const debrief = await analyzeSession(provider, session, index);
+      debriefs.set(session.id, debrief);
       store.update(session);
       return c.json({ debrief });
     } catch (err) {
       return c.json({ error: errorMessage(err) }, 500);
     }
+  });
+
+  app.get('/api/sessions/:id/debrief.md', (c) => {
+    const debrief = debriefs.get(c.req.param('id'));
+    if (!debrief) {
+      return c.json({ error: 'No debrief yet. Generate one first.' }, 404);
+    }
+    return c.body(renderDebriefMarkdown(debrief), 200, {
+      'content-type': 'text/markdown; charset=utf-8',
+      'content-disposition': `attachment; filename="debrief-${debrief.projectName}.md"`,
+    });
   });
 
   // Static browser app (must come last so /api routes win).
