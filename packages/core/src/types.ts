@@ -61,6 +61,10 @@ export interface ManifestSummary {
   description?: string;
   scripts?: string[];
   dependencies?: string[];
+  /** Declared entry file, e.g. package.json "main". */
+  main?: string;
+  /** Declared bin targets, e.g. package.json "bin". */
+  bin?: string[];
   raw?: string;
 }
 

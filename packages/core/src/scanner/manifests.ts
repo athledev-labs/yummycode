@@ -109,6 +109,9 @@ async function parsePackageJson(abs: string, rel: string): Promise<ManifestSumma
       ...(json.dependencies ?? {}),
       ...(json.devDependencies ?? {}),
     };
+    let bin: string[] | undefined;
+    if (typeof json.bin === 'string') bin = [json.bin];
+    else if (json.bin && typeof json.bin === 'object') bin = Object.values(json.bin) as string[];
     return {
       file: rel,
       ecosystem: 'node',
@@ -117,6 +120,8 @@ async function parsePackageJson(abs: string, rel: string): Promise<ManifestSumma
       description: json.description,
       scripts: json.scripts ? Object.keys(json.scripts) : undefined,
       dependencies: Object.keys(deps).slice(0, 60),
+      main: typeof json.main === 'string' ? json.main : undefined,
+      bin,
     };
   } catch {
     return { file: rel, ecosystem: 'node', raw: text.slice(0, 2000) };
