@@ -18,10 +18,13 @@ import type { LLMProvider } from '@yummycode/llm';
 import { SessionStore } from './session-store.js';
 import { filterThink } from './stream-filter.js';
 import { createStaticHandler } from './static.js';
+import { listSessions, loadSession, saveSession } from './session-persistence.js';
 
 export interface AppDeps {
   index: ProjectIndex;
   provider: LLMProvider;
+  /** When set, sessions are persisted under this directory (best-effort). */
+  persistDir?: string | null;
   webDist: string | null;
 }
 
@@ -54,6 +57,19 @@ export function createApp(deps: AppDeps): Hono {
   const store = new SessionStore();
   const app = new Hono();
   const debriefs = new Map<string, Debrief>();
+  const persistDir = deps.persistDir ?? null;
+
+  // Return a session from memory, or rehydrate it from disk if persistence is on.
+  const resolve = async (id: string) => {
+    const inMemory = store.get(id);
+    if (inMemory) return inMemory;
+    if (!persistDir) return undefined;
+    const record = await loadSession(persistDir, id);
+    if (!record) return undefined;
+    store.add(record.session);
+    if (record.debrief) debriefs.set(id, record.debrief);
+    return record.session;
+  };
 
   app.get('/api/health', async (c) => {
     const status = await provider.status();
@@ -85,14 +101,19 @@ export function createApp(deps: AppDeps): Hono {
     return c.json({ session });
   });
 
-  app.get('/api/sessions/:id', (c) => {
-    const session = store.get(c.req.param('id'));
+  app.get('/api/sessions', async (c) => {
+    const sessions = persistDir ? await listSessions(persistDir) : [];
+    return c.json({ sessions });
+  });
+
+  app.get('/api/sessions/:id', async (c) => {
+    const session = await resolve(c.req.param('id'));
     if (!session) return c.json({ error: 'Session not found' }, 404);
     return c.json({ session });
   });
 
-  app.get('/api/sessions/:id/evidence', (c) => {
-    const session = store.get(c.req.param('id'));
+  app.get('/api/sessions/:id/evidence', async (c) => {
+    const session = await resolve(c.req.param('id'));
     if (!session) return c.json({ error: 'Session not found' }, 404);
     const topic = c.req.query('topic') ?? '';
     const chunks = evidenceFor(index, topic, 6);
@@ -101,7 +122,7 @@ export function createApp(deps: AppDeps): Hono {
 
   app.post('/api/sessions/:id/messages', async (c) => {
     const id = c.req.param('id');
-    const session = store.get(id);
+    const session = await resolve(id);
     if (!session) return c.json({ error: 'Session not found' }, 404);
     if (store.isBusy(id)) return c.json({ error: 'A response is already in progress.' }, 409);
 
@@ -172,6 +193,7 @@ export function createApp(deps: AppDeps): Hono {
         session.turns.push(personaTurn);
         session.updatedAt = new Date().toISOString();
         store.update(session);
+        if (persistDir) await saveSession(persistDir, session);
 
         await stream.writeSSE({
           event: 'done',
@@ -194,7 +216,7 @@ export function createApp(deps: AppDeps): Hono {
   });
 
   app.post('/api/sessions/:id/debrief', async (c) => {
-    const session = store.get(c.req.param('id'));
+    const session = await resolve(c.req.param('id'));
     if (!session) return c.json({ error: 'Session not found' }, 404);
     if (session.userTurnCount === 0) {
       return c.json({ error: 'Have a short conversation before generating a debrief.' }, 400);
@@ -204,14 +226,17 @@ export function createApp(deps: AppDeps): Hono {
       const debrief = await analyzeSession(provider, session, index);
       debriefs.set(session.id, debrief);
       store.update(session);
+      if (persistDir) await saveSession(persistDir, session, debrief);
       return c.json({ debrief });
     } catch (err) {
       return c.json({ error: errorMessage(err) }, 500);
     }
   });
 
-  app.get('/api/sessions/:id/debrief.md', (c) => {
-    const debrief = debriefs.get(c.req.param('id'));
+  app.get('/api/sessions/:id/debrief.md', async (c) => {
+    const id = c.req.param('id');
+    if (!debriefs.has(id)) await resolve(id); // rehydrate from disk if needed
+    const debrief = debriefs.get(id);
     if (!debrief) {
       return c.json({ error: 'No debrief yet. Generate one first.' }, 404);
     }

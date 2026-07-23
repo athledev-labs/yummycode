@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { serve } from '@hono/node-server';
 import type { Server } from 'node:http';
 import type { ProjectIndex } from '@yummycode/core';
@@ -12,6 +13,11 @@ export interface StartServerOptions {
   port?: number;
   host?: string;
   webDist?: string | null;
+  /**
+   * Directory for session persistence. Defaults to the project's `.yummycode`.
+   * Pass null to disable persistence entirely.
+   */
+  persistDir?: string | null;
 }
 
 export interface RunningServer {
@@ -24,7 +30,11 @@ export interface RunningServer {
 export async function startServer(options: StartServerOptions): Promise<RunningServer> {
   const host = options.host ?? '127.0.0.1';
   const webDist = options.webDist ?? resolveWebDist();
-  const app = createApp({ index: options.index, provider: options.provider, webDist });
+  const persistDir =
+    options.persistDir === null
+      ? null
+      : (options.persistDir ?? path.join(options.index.root, '.yummycode'));
+  const app = createApp({ index: options.index, provider: options.provider, webDist, persistDir });
 
   return new Promise<RunningServer>((resolve, reject) => {
     let server: Server;
